@@ -5,18 +5,17 @@ import requests
 from crewai import Agent, Task
 from langchain.tools import tool
 from unstructured.partition.html import partition_html
-
+from utils.scrape_website import get_website_html
 
 class BrowserTools():
 
   @tool("Scrape website content")
   def scrape_and_summarize_website(website):
     """Useful to scrape and summarize a website content"""
-    url = f"https://chrome.browserless.io/content?token={os.environ['BROWSERLESS_API_KEY']}"
-    payload = json.dumps({"url": website})
-    headers = {'cache-control': 'no-cache', 'content-type': 'application/json'}
-    response = requests.request("POST", url, headers=headers, data=payload)
-    elements = partition_html(text=response.text)
+    response = get_website_html(website)
+    if response is None:
+      return "Sorry, I couldn't find anything about that, there could be an error with you serper api key."
+    elements = partition_html(text=response)
     content = "\n\n".join([str(el) for el in elements])
     content = [content[i:i + 8000] for i in range(0, len(content), 8000)]
     summaries = []
@@ -28,6 +27,7 @@ class BrowserTools():
           backstory=
           "You're a Principal Researcher at a big company and you need to do a research about a given topic.",
           allow_delegation=False)
+      
       task = Task(
           agent=agent,
           description=
