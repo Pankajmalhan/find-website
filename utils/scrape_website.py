@@ -50,5 +50,32 @@ def get_website_html_headless(url):
     documents = html2text.transform_documents(html)
     return documents
 
+def check_about_page(url):
+       try:
+        # Send a HTTP request to the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Will raise an HTTPError for bad requests (4XX or 5XX)
+
+        # Parse the HTML content of the page with BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Search for all anchor tags
+        for link in soup.find_all('a'):
+            # Check if the text of the anchor contains 'About' or 'About Us'
+            if 'about' in link.text.strip().lower():
+                # Return the href attribute of the anchor tag
+                href = link.get('href')
+                if href:
+                    # Check if the link is absolute or relative
+                    if href.startswith('http'):
+                        return href
+                    else:
+                        # Construct the full URL if the link is relative
+                        from urllib.parse import urljoin
+                        return urljoin(url, href)
+
+        return "No 'About Us' link found."
+       except requests.exceptions.RequestException as e:
+        return str(e)
     
 

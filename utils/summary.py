@@ -15,7 +15,8 @@ location = "us-central1"
 project_id = "accessfind-7165sxdh4e"
 vertexai.init(project=project_id, location=location)
 
-MODEL_ID="gemini-1.5-pro-preview-0409"
+# MODEL_ID="text-bison@001"
+MODEL_ID = "gemini-1.0-pro-002"
 llm = VertexAI(model_name=MODEL_ID)
 
 # llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
@@ -46,7 +47,6 @@ def summarize_map_reduce(docs):
        reduce_template = """The following is set of summaries:
        {docs}
        Take these and distill it into a final, consolidated summary.
-       Provide a final summary that contains the summary of list of documents. 
        Ignore the introduction text like documents provided include etc. Just give the summary
        """
        reduce_prompt = PromptTemplate.from_template(reduce_template)
