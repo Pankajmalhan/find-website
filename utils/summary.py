@@ -47,7 +47,7 @@ def summarize_map_reduce(docs):
        reduce_template = """The following is set of summaries:
        {docs}
        Take these and distill it into a final, consolidated summary.
-       Provide the summary in form of paragraph, don't create the points in summary
+       Provide the summary in form of paragraph, don't create the points in summary.
        Ignore the introduction text like documents provided include etc. Just give the summary
        """
        reduce_prompt = PromptTemplate.from_template(reduce_template)

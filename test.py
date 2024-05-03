@@ -8,12 +8,12 @@ load_dotenv()
 import requests
 from utils.scrape_website import get_website_html_headless, get_website_text, check_about_page
 from utils.summary import summarize_stuff_chain, summarize_map_reduce
-from utils.keyword_extractor import get_keywords_from_text
+from utils.keyword_extractor import get_keywords_and_title_from_text, get_title
 from langchain_core.documents import Document
 from tqdm import tqdm
 
 def runner():
-    WEBSITE_URL = "https://accessibe.com/"
+    WEBSITE_URL = "https://tftus.com/"
     website_text = ""
     
     print("Fetching main website content...")
@@ -41,14 +41,23 @@ def runner():
     print("Summarizing content...")
     docs = [Document(page_content=content[i:i + 2000]) for i in tqdm(range(0, len(content), 2000), desc="Processing Content")]
     summarized_text = summarize_map_reduce(docs)
-    print(summarized_text)
+#     print(summarized_text)
 
-    print("### Extracting the keywords from the summary")
-    keywords = get_keywords_from_text(summarized_text)
-    print("Keywords:", keywords)
+    print("### Extracting the keywords and title")
+    keywords_title = get_keywords_and_title_from_text(summarized_text)
+    
+    keywords = []
+    title = ""
+
+    # Check if keywords_title is not None before accessing its attributes
+    if keywords_title:
+       keywords = keywords_title.keywords if keywords_title.keywords is not None else []
+       title = keywords_title.title if keywords_title.title is not None else ""
 
     print("### Saving extracted info to file")
-    save_extracted_info(WEBSITE_URL, summarized_text, keywords)
+    print(title)
+    print(keywords)
+    save_extracted_info(WEBSITE_URL, summarized_text, ",".join(keywords), title)
 
 
 

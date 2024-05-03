@@ -12,6 +12,12 @@ def get_website_text(url):
         if response.status_code == 200:
             # Parse the HTML content using BeautifulSoup
             soup = BeautifulSoup(response.content, 'html.parser')
+
+             # Remove script and style elements
+            elements_to_remove = ["script", "style", "header", "footer", "nav", "form", "a"]
+            for script_or_style in soup(elements_to_remove):
+                script_or_style.decompose()
+
             # Extract text from the parsed HTML
             text = soup.get_text()
             return text
