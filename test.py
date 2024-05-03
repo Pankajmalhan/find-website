@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import os
 
+from utils.common import save_extracted_info
+
 # Load environment variables from .env file
 load_dotenv()
 import requests
@@ -44,6 +46,11 @@ def runner():
     print("### Extracting the keywords from the summary")
     keywords = get_keywords_from_text(summarized_text)
     print("Keywords:", keywords)
+
+    print("### Saving extracted info to file")
+    save_extracted_info(WEBSITE_URL, summarized_text, keywords)
+
+
 
 if __name__ == "__main__":
     runner()
