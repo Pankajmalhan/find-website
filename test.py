@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import time
 
 from utils.common import save_extracted_info
 
@@ -13,7 +14,8 @@ from langchain_core.documents import Document
 from tqdm import tqdm
 
 def runner():
-    WEBSITE_URL = "https://tftus.com/"
+    start_time = time.time()
+    WEBSITE_URL = "https://tftus.com"
     website_text = ""
     
     print("Fetching main website content...")
@@ -55,11 +57,10 @@ def runner():
        title = keywords_title.title if keywords_title.title is not None else ""
 
     print("### Saving extracted info to file")
-    print(title)
-    print(keywords)
     save_extracted_info(WEBSITE_URL, summarized_text, ",".join(keywords), title)
 
-
+    total_time = time.time() - start_time
+    print(f"Total time taken: {total_time} seconds")
 
 if __name__ == "__main__":
     runner()

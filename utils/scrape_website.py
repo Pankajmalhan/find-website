@@ -7,7 +7,7 @@ from langchain_community.document_transformers import Html2TextTransformer
 def get_website_text(url):
     try:
         # Send a GET request to the URL
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
             # Parse the HTML content using BeautifulSoup
