@@ -15,3 +15,9 @@ def save_extracted_info(website_url, summary, keywords, title):
         file.write(title + "\n")
 
     print(f"Output written to {filename}")
+
+
+def clean_text(text):
+    cleaned_text = text.replace("\n\n", ' ')
+    cleaned_text = re.sub(r'\s+', ' ', text).strip()
+    return cleaned_text

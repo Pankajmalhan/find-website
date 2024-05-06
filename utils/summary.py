@@ -39,7 +39,7 @@ def summarize_map_reduce(docs):
        # Map
        map_template = """The following is a set of documents
        {docs}
-       Based on this list of docs, please provide the summary of text:"""
+       Based on this list of docs, please provide the summary of text."""
        map_prompt = PromptTemplate.from_template(map_template)
        map_chain = LLMChain(llm=llm, prompt=map_prompt)
 

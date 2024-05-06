@@ -3,18 +3,23 @@ from bs4 import BeautifulSoup
 from langchain_community.document_loaders import AsyncChromiumLoader
 from langchain_community.document_transformers import BeautifulSoupTransformer
 from langchain_community.document_transformers import Html2TextTransformer
+from langchain_community.document_loaders import WebBaseLoader
 
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
 def get_website_text(url):
     try:
         # Send a GET request to the URL
-        response = requests.get(url, timeout=10)
+        headers = {
+            'User-Agent': USER_AGENT
+        }
+        response = requests.get(url,headers=headers, timeout=10)
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
             # Parse the HTML content using BeautifulSoup
             soup = BeautifulSoup(response.content, 'html.parser')
 
              # Remove script and style elements
-            elements_to_remove = ["script", "style", "header", "footer", "nav", "form", "a"]
+            elements_to_remove = ["script","menu", "style", "header", "footer", "nav", "form", "a", "head", "i", "img"]
             for script_or_style in soup(elements_to_remove):
                 script_or_style.decompose()
 
@@ -23,7 +28,7 @@ def get_website_text(url):
             return text
         else:
             # Print an error message if the request was not successful
-            print(f"Failed to fetch content from {url}. Status code: {response.status_code}")
+            print(f"Failed to fetch content from {url}, Status code: {response.status_code}")
             return None
     except requests.exceptions.RequestException as e:
         # Handle any errors that occur during the request
@@ -51,6 +56,7 @@ def get_website_html_headless(url):
     loader = AsyncChromiumLoader([url])
     html2text = Html2TextTransformer()
     html = loader.load()
+    print(html)
     if html is None:
         return None
     documents = html2text.transform_documents(html)
@@ -59,7 +65,10 @@ def get_website_html_headless(url):
 def check_about_page(url):
        try:
         # Send a HTTP request to the URL
-        response = requests.get(url)
+        headers = {
+            'User-Agent': USER_AGENT
+        }
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()  # Will raise an HTTPError for bad requests (4XX or 5XX)
 
         # Parse the HTML content of the page with BeautifulSoup
@@ -74,11 +83,11 @@ def check_about_page(url):
                 if href:
                     # Check if the link is absolute or relative
                     if href.startswith('http'):
-                        return href
+                        return href.strip()
                     else:
                         # Construct the full URL if the link is relative
                         from urllib.parse import urljoin
-                        return urljoin(url, href)
+                        return urljoin(url, href).strip()
 
         return "No 'About Us' link found."
        except requests.exceptions.RequestException as e:

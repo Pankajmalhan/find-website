@@ -11,8 +11,8 @@ from typing import List
 from langchain.output_parsers import PydanticOutputParser
 
 class TitleKeywordsOutputParser(BaseModel):
-    title: str = Field(description="title of the website")
-    keywords: List[str] = Field(description="keywords of the website")
+    title: str = Field(description="title of the website", required=False)
+    keywords: List[str] = Field(description="keywords of the website", required=False)
 
 
 project_id = "accessfind-7165sxdh4e"
@@ -33,9 +33,9 @@ def extract_keywords(prompt, temperature, max_decode_steps, top_k, top_p):
        return response.text
 
 def get_keywords_and_title_from_text(summary):
-
+       print("Summary: " + summary)
        parser = PydanticOutputParser(pydantic_object=TitleKeywordsOutputParser)
-
+       print(parser.get_format_instructions())
        extract_prompt = """
        Given the summary of a website provided below, identify title and list the most
        relevant keywords that capture the essence and main topics of the website.

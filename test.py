@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 import os
 import time
-
-from utils.common import save_extracted_info
+import re
+from utils.common import save_extracted_info, clean_text
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,16 +10,22 @@ import requests
 from utils.scrape_website import get_website_html_headless, get_website_text, check_about_page
 from utils.summary import summarize_stuff_chain, summarize_map_reduce
 from utils.keyword_extractor import get_keywords_and_title_from_text, get_title
+from utils.splitter import get_documents
 from langchain_core.documents import Document
 from tqdm import tqdm
 
 def runner():
     start_time = time.time()
-    WEBSITE_URL = "https://tftus.com"
+    WEBSITE_URL = "https://www.winni.in"
     website_text = ""
     
     print("Fetching main website content...")
     content = get_website_text(WEBSITE_URL)
+    if content is None:
+        print("No website found")
+        return
+    content = content.strip()
+
     if content is None:
         print("No website found")
         return
@@ -40,9 +46,13 @@ def runner():
     else:
         print("No 'About Us' link found")
 
+    cleaned_text = clean_text(website_text)
+#     print(cleaned_text)
+#     return
     print("Summarizing content...")
-    docs = [Document(page_content=content[i:i + 2000]) for i in tqdm(range(0, len(content), 2000), desc="Processing Content")]
+    docs = get_documents(cleaned_text)
     summarized_text = summarize_map_reduce(docs)
+#     print("Summarized content result")
 #     print(summarized_text)
 
     print("### Extracting the keywords and title")
