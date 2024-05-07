@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import time
 import re
-from utils.common import save_extracted_info, clean_text
+from utils.common import save_extracted_info, clean_text, get_domain
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,22 +16,16 @@ from tqdm import tqdm
 
 def runner():
     start_time = time.time()
-    WEBSITE_URL = "https://www.winni.in"
+    WEBSITE_URL = "https://www.tftus.com"
     website_text = ""
     
     print("Fetching main website content...")
     content = get_website_text(WEBSITE_URL)
-    if content is None:
-        print("No website found")
-        return
-    content = content.strip()
 
     if content is None:
         print("No website found")
         return
-    else:
-        print("Website text found")
-        website_text = content
+    content = content.strip()
 
     print("Checking for 'About Us' page...")
     about_us_url = check_about_page(WEBSITE_URL)
@@ -40,20 +34,17 @@ def runner():
         about_us_content = get_website_text(about_us_url)
         if about_us_content is None:
             print("No content found for about us url")
+            website_text = content
         else:
             print("Content found for about us url")
-            website_text += "\n\n" + about_us_content
+            website_text = about_us_content.strip()
     else:
         print("No 'About Us' link found")
 
     cleaned_text = clean_text(website_text)
-#     print(cleaned_text)
-#     return
     print("Summarizing content...")
     docs = get_documents(cleaned_text)
     summarized_text = summarize_map_reduce(docs)
-#     print("Summarized content result")
-#     print(summarized_text)
 
     print("### Extracting the keywords and title")
     keywords_title = get_keywords_and_title_from_text(summarized_text)
@@ -67,7 +58,7 @@ def runner():
        title = keywords_title.title if keywords_title.title is not None else ""
 
     print("### Saving extracted info to file")
-    save_extracted_info(WEBSITE_URL, summarized_text, ",".join(keywords), title)
+    save_extracted_info(get_domain(WEBSITE_URL), summarized_text, ",".join(keywords), title)
 
     total_time = time.time() - start_time
     print(f"Total time taken: {total_time} seconds")
