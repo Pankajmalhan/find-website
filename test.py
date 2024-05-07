@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 def runner():
     start_time = time.time()
-    WEBSITE_URL = "https://www.tftus.com"
+    WEBSITE_URL = "https://www.accessibe.com"
     website_text = ""
     
     print("Fetching main website content...")

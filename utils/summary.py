@@ -2,24 +2,9 @@ from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
-from langchain_community.chat_models import ChatOpenAI
-import vertexai
-from vertexai.preview.generative_models import GenerativeModel, ChatSession
-from langchain_google_vertexai import VertexAI
-from langchain.globals import set_llm_cache
-from langchain.cache import SQLiteCache
+from utils.llm_models import groq_model
 
-set_llm_cache(SQLiteCache(database_path=".langchain.db"))
-
-location = "us-central1"
-project_id = "accessfind-7165sxdh4e"
-vertexai.init(project=project_id, location=location)
-
-# MODEL_ID="text-bison@001"
-MODEL_ID = "gemini-1.0-pro-002"
-llm = VertexAI(model_name=MODEL_ID)
-
-# llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
+llm = groq_model()
 
 def summarize_stuff_chain(docs):
        # Define prompt

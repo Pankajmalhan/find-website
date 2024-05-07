@@ -1,27 +1,15 @@
-import vertexai
-from vertexai.language_models import TextGenerationModel
-from string import Template
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_google_vertexai import VertexAI
-from typing import Optional
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List
 from langchain.output_parsers import PydanticOutputParser
-
+from utils.llm_models import gemini_model
 class TitleKeywordsOutputParser(BaseModel):
     title: str = Field(description="title of the website", required=False)
     keywords: List[str] = Field(description="keywords of the website", required=False)
 
-
-project_id = "accessfind-7165sxdh4e"
-location = "us-central1"
-# model_name = "text-bison@001"
-MODEL_ID = "gemini-1.0-pro-002"
-vertexai.init(project=project_id, location=location)
-# model = TextGenerationModel.from_pretrained(model_name)
-model = VertexAI(model_name=MODEL_ID)
+model = gemini_model()
 
 def extract_keywords(prompt, temperature, max_decode_steps, top_k, top_p):
        response = model.predict(
