@@ -4,12 +4,12 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List
 from langchain.output_parsers import PydanticOutputParser
-from utils.llm_models import gemini_model
+from utils.llm_models import groq_model
 class TitleKeywordsOutputParser(BaseModel):
     title: str = Field(description="title of the website", required=False)
     keywords: List[str] = Field(description="keywords of the website", required=False)
 
-model = gemini_model()
+model = groq_model()
 
 def extract_keywords(prompt, temperature, max_decode_steps, top_k, top_p):
        response = model.predict(
