@@ -2,6 +2,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.embeddings import HuggingFaceHubEmbeddings
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_openai import OpenAIEmbeddings
+from sentence_transformers import SentenceTransformer, util
 
 def get_embeddings_gemini(text):
        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -9,7 +10,7 @@ def get_embeddings_gemini(text):
        return vector
 
 def get_embeddings_openai(text):
-       embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+       embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
        vector = embeddings.embed_query(text)
        return vector
 
