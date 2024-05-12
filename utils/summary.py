@@ -29,12 +29,10 @@ def summarize_map_reduce(docs):
        map_chain = LLMChain(llm=llm, prompt=map_prompt)
 
        # Reduce
-       reduce_template = """The following is set of summaries:
-       {docs}
-       Take these and distill it into a final, consolidated summary.
-       Provide the summary in form of paragraph, don't create the points in summary.
-       Ignore the introduction text like documents provided include etc. Just give the summary
-       """
+       reduce_template = """Given the summaries below, provide a coherent paragraph summary, without any additional information or instructions:
+              {docs}
+              Focus on delivering the essence of the information without any formal introduction or filler text. Present the content concisely and clearly."""
+
        reduce_prompt = PromptTemplate.from_template(reduce_template)
 
        # Run chain

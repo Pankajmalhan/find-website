@@ -28,3 +28,8 @@ def insert_website(websiteObj):
        response  = collection.insert_one(websiteObj)
        return response.inserted_id
 
+def update_website(query, websiteObj):
+       collection =  get_website_collection();
+       response  = collection.update_one(query, {"$set":websiteObj})
+       return response.upserted_id
+

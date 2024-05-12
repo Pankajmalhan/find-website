@@ -15,9 +15,6 @@ def save_extracted_info(website_url, summary, keywords, title):
         file.write("Title:\n")
         file.write(title + "\n")
 
-    print(f"Output written to {filename}")
-
-
 def clean_text(text):
     cleaned_text = text.replace("\n\n", ' ')
     cleaned_text = re.sub(r'\s+', ' ', text).strip()
@@ -36,3 +33,6 @@ def get_domain(url):
     # Regular expression to remove 'www.' and '.com'
     clean_domain = re.sub(r'^(www\.)|(\.com)$', '', domain)
     return clean_domain
+
+def lowercase_list(string_list):
+  return [string.lower() for string in string_list]
