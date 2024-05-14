@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from langchain_community.document_loaders import AsyncChromiumLoader
 from langchain_community.document_transformers import Html2TextTransformer
+from utils.common import get_domain
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
 
@@ -106,7 +107,7 @@ def check_about_page(base_url):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # Define potential keywords to look for in link text
-        about_pattern = re.compile(r'about|our story|who we are|company info|our team', re.IGNORECASE)
+        about_pattern = re.compile(r'about-us|about|our story|who we are|company info|our team', re.IGNORECASE)
 
         candidate_links = []
         for link in soup.find_all('a', href=True):
@@ -115,9 +116,11 @@ def check_about_page(base_url):
 
             # Check if the text or title of the anchor contains about keywords
             if about_pattern.search(link_text) or about_pattern.search(link_title):
+                keyword_to_exclude = ['careers']
                 href = urljoin(base_url, link['href'])
-                candidate_links.append(href)
-
+                if not any(kw in href for kw in keyword_to_exclude):
+                    candidate_links.append(href)
+                    
         # Validate candidates
         for candidate in candidate_links:
             try:

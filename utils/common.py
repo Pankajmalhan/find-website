@@ -1,6 +1,7 @@
 import re
 import os
 from urllib.parse import urlparse
+import requests
 
 def save_extracted_info(website_url, summary, keywords, title):
        # Create filename from URL
@@ -36,3 +37,17 @@ def get_domain(url):
 
 def lowercase_list(string_list):
   return [string.lower() for string in string_list]
+
+import requests
+
+def is_valid_url(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        print(response.status_code)
+        return response.status_code == 200
+    except requests.ConnectionError:
+        return False
+

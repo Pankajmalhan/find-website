@@ -4,7 +4,7 @@ load_dotenv()
 
 import time
 import re
-from utils.common import save_extracted_info, clean_text, get_domain, lowercase_list
+from utils.common import save_extracted_info, clean_text, get_domain, lowercase_list, is_valid_url
 from db_store.mongo import update_website, is_website_exists,insert_website
 # Load environment variables from .env file
 import requests
@@ -14,39 +14,48 @@ from utils.keyword_extractor import get_keywords_and_title_from_text, get_title
 from utils.splitter import get_documents
 from langchain_core.documents import Document
 from tqdm import tqdm
-from utils.embeddings import get_embeddings_huggingface, get_embeddings_openai
+from utils.embeddings import get_embeddings_openai
 import datetime
 
 def runner():
+    WEBSITE_URL = "https://www.ucare.org/"
     start_time = time.time()
-    WEBSITE_URL = "https://www.tftus.com"
-    website_text = ""
-    
-    print("Fetching main website content...")
-    content = get_website_text(WEBSITE_URL)
 
-    if content is None:
-        print("No website found")
+    print(f"Start time: {datetime.datetime.now()}")
+    print("Checking url exist or not")
+    domain = get_domain(WEBSITE_URL)
+    is_valid = is_valid_url(WEBSITE_URL)
+
+    if not is_valid:
+        print(f"Invalid URL: {WEBSITE_URL}")
         return
-    content = content.strip()
-    website_text = content
+    website_text = ""
 
     print("Checking for 'About Us' page...")
     about_us_url = check_about_page(WEBSITE_URL)
     if about_us_url is not None:
         print(f"Fetching 'About Us' content from: {about_us_url}")
         about_us_content = get_website_text(about_us_url)
-        if about_us_content is None:
-            print("No content found for about us url")
-            website_text = content
-        else:
+        if about_us_content:
             print("Content found for about us url")
             website_text = about_us_content.strip()
     else:
         print("No 'About Us' link found")
 
+    if not website_text:
+        print("Fetching main website content...")
+        content = get_website_text(WEBSITE_URL)
+        if content:
+            content = content.strip()
+            website_text = content
+
+    if not website_text:
+        print(f"No content found for {WEBSITE_URL}")
+        return
+
 
     cleaned_text = clean_text(website_text)
+    print(f'cleaned text size: {len(cleaned_text)}')
 
     docs = get_documents(cleaned_text)
     summarized_text = summarize_map_reduce(docs)
@@ -65,10 +74,6 @@ def runner():
     if keywords_title:
        keywords = keywords_title.keywords if keywords_title.keywords is not None else []
        title = keywords_title.title if keywords_title.title is not None else ""
-
-    domain = get_domain(WEBSITE_URL)
-    print("### Saving extracted info to file")
-    save_extracted_info(domain, summarized_text, ",".join(keywords), title)
 
     print("###Getting text embeddings")
     embeddings_summarized_text = get_embeddings_openai(summarized_text)
