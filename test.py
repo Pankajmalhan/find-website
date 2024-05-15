@@ -14,11 +14,11 @@ from utils.keyword_extractor import get_keywords_and_title_from_text, get_title
 from utils.splitter import get_documents
 from langchain_core.documents import Document
 from tqdm import tqdm
-from utils.embeddings import get_embeddings_openai
+from utils.embeddings import get_embeddings_openai, get_embeddings_gecko
 import datetime
 
 def runner():
-    WEBSITE_URL = "https://www.ucare.org/"
+    WEBSITE_URL = "https://www.llamaindex.ai"
     start_time = time.time()
 
     print(f"Start time: {datetime.datetime.now()}")
@@ -76,7 +76,7 @@ def runner():
        title = keywords_title.title if keywords_title.title is not None else ""
 
     print("###Getting text embeddings")
-    embeddings_summarized_text = get_embeddings_openai(summarized_text)
+    embeddings_summarized_text = get_embeddings_gecko(summarized_text)
     is_website_already_exists = is_website_exists(domain)
 
     now = datetime.datetime.now()
