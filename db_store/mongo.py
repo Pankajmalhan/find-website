@@ -33,3 +33,29 @@ def update_website(query, websiteObj):
        response  = collection.update_one(query, {"$set":websiteObj})
        return response.upserted_id
 
+
+def search_websites(embedding, limit=10, skip=0):
+       collection =  get_website_collection();
+       websites = collection.aggregate([
+              {
+                     "$vectorSearch": {
+                            "index": ATLAS_VECTOR_SEARCH_INDEX_NAME,
+                            "queryVector": embedding,
+                            "numCandidates":100,
+                            "path": "summary",
+                            "limit": limit,
+                     }
+              },
+              {
+              "$project": {
+                     "summary_text": 1,
+                     "domain":1,
+                     "title": 1,
+                     "keywords": 1,
+                     "updated_at": 1,
+                     "summary": 1,
+                     "score": { "$meta": "vectorSearchScore" }
+              }
+              }
+       ])
+       return websites

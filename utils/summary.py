@@ -2,9 +2,9 @@ from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
 from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
-from utils.llm_models import groq_model
+from utils.llm_models import groq_model, gemini_model
 
-llm = groq_model()
+llm = gemini_model()
 
 def summarize_stuff_chain(docs):
        # Define prompt
@@ -22,16 +22,21 @@ def summarize_stuff_chain(docs):
 
 def summarize_map_reduce(docs):
        # Map
-       map_template = """The following is a set of documents
+       map_template = """The following is a set of documents for a website
        {docs}
-       Based on this list of docs, please provide the summary of text."""
+       Based on this list of docs, please provide the summary about website. What actually it do, what kind of services it provide. 
+       Don't create the bullet points, just proivde summary in a paragraph"""
        map_prompt = PromptTemplate.from_template(map_template)
        map_chain = LLMChain(llm=llm, prompt=map_prompt)
 
        # Reduce
        reduce_template = """Given the summaries below, provide a coherent paragraph summary, without any additional information or instructions:
               {docs}
-              Focus on delivering the essence of the information without any formal introduction or filler text. Present the content concisely and clearly."""
+              Focus on delivering the essence of the information without any formal introduction or filler text. Present the content concisely and clearly.
+              Summary should contains detailed information about the website.
+              Note: Maximum size of summary should be greater than 1000.
+                     Give summary in form of paragraphs not as points
+              """
 
        reduce_prompt = PromptTemplate.from_template(reduce_template)
 
