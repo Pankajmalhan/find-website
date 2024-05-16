@@ -45,8 +45,7 @@ def is_valid_url(url):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
     }
     try:
-        response = requests.get(url, headers=headers)
-        print(response.status_code)
+        response = requests.get(url, headers=headers, timeout=20)
         return response.status_code == 200
     except requests.ConnectionError:
         return False
