@@ -14,7 +14,7 @@ from utils.keyword_extractor import get_keywords_and_title_from_text, get_title
 from utils.splitter import get_documents
 from langchain_core.documents import Document
 from tqdm import tqdm
-from utils.embeddings import get_embeddings_openai, get_embeddings_gecko
+from utils.embeddings import get_embeddings_huggingface, get_embeddings_gecko
 import datetime
 
 def runner():
@@ -76,14 +76,14 @@ def runner():
        title = keywords_title.title if keywords_title.title is not None else ""
 
     print("###Getting text embeddings")
-    embeddings_summarized_text = get_embeddings_gecko(summarized_text)
+    embeddings_summarized_text = get_embeddings_huggingface([summarized_text])
     is_website_already_exists = is_website_exists(domain)
 
     now = datetime.datetime.now()
     formatted_date = now.strftime('%d/%m/%Y %H:%M')
 
     website_object = {
-        "summary": embeddings_summarized_text,
+        "summary": embeddings_summarized_text[0].tolist(),
         "summary_text": summarized_text,
         "domain": domain,
         "title": title,

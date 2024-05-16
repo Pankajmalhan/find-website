@@ -1,0 +1,41 @@
+Problem, Solution
+How to handle website in different language,
+how to get about us for multi lingual
+
+Which one is the best model for summarization and how can we reduce the cost
+
+Todo:
+extract address from website, map
+match percent 
+load summarize chain
+
+
+### what should be the vector size and similarty method(cosine, eculedain, mainhaiton)
+which embedding vector generator should we use
+
+########## website object ##############
+{
+       title: string,
+       summarization: string,
+       keywords: string[],
+
+       disabled: boolean,
+       enabled: boolean,
+       lastSyncBatchId: string,
+       screenshot: string,
+       underAccessiblityReview: boolean,
+       submittedByUser: boolean,
+       dateUpdated: string,
+       updateCount: number
+
+}
+
+
+supported DBS:
+1. Elasticsearch
+2. MongoDB with a Vector Search Engine
+3. FaunaDB
+4. PostgreSQL with PGroonga or TimescaleDB
+5. Weaviate
+6. Redis
+7. ArangoDB

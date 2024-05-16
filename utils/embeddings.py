@@ -15,11 +15,10 @@ def get_embeddings_openai(text):
        vector = embeddings.embed_query(text)
        return vector
 
-def get_embeddings_huggingface(text):
-       # embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-       embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/bert-base-nli-mean-tokens")
-       query_result = embeddings.embed_query(text)
-       return query_result
+def get_embeddings_huggingface(sentences):
+       model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+       embeddings = model.encode(sentences)
+       return embeddings
 
 def get_embeddings_gecko(text):
        model = TextEmbeddingModel.from_pretrained("textembedding-gecko")
