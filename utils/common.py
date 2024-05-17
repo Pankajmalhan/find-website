@@ -27,7 +27,6 @@ def get_domain(url):
     # Parse the URL to extract the domain
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
-    
     # Remove port numbers if any
     domain = domain.split(':')[0]
     

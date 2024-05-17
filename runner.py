@@ -23,8 +23,9 @@ def runner(WEBSITE_URL):
         start_time = time.time()
 
         print(f'Started processing website: {WEBSITE_URL}')
-        print("Checking url exist or not")
+        print(f"Checking url exist or not: {WEBSITE_URL}")
         domain = get_domain(WEBSITE_URL)
+        print(f'Checking domain: {domain}')
         is_valid = is_valid_url(WEBSITE_URL)
 
         if not is_valid:
@@ -43,7 +44,7 @@ def runner(WEBSITE_URL):
         # else:
         #     print("No 'About Us' link found")
 
-        print("Fetching main website content...")
+        print(f"Fetching main website content:{WEBSITE_URL}")
         content = get_website_text(WEBSITE_URL)
         if content:
             content = content.strip()
@@ -55,7 +56,10 @@ def runner(WEBSITE_URL):
 
 
         cleaned_text = clean_text(website_text)
-        print(f'cleaned text size: {len(cleaned_text)}')
+        print(f'cleaned text size:{WEBSITE_URL} {len(cleaned_text)}')
+        if len(cleaned_text) > 10000:
+            print(f"website text is too long: {WEBSITE_URL}")
+            return None
 
         docs = get_documents(cleaned_text)
         summarized_text = summarize_map_reduce(docs)
@@ -63,7 +67,7 @@ def runner(WEBSITE_URL):
         if summarized_text is None or len(summarized_text.strip())==0:
             print("No summarized text found")
             return
-        print("### Extracting the keywords and title")
+        print(f"### Extracting the keywords and title {WEBSITE_URL}")
         keywords_title = get_keywords_and_title_from_text(summarized_text)
         
         keywords = []
@@ -74,7 +78,7 @@ def runner(WEBSITE_URL):
             keywords = keywords_title.keywords if keywords_title.keywords is not None else []
             title = keywords_title.title if keywords_title.title is not None else ""
 
-        print("###Getting text embeddings")
+        print(f"###Getting text embeddings: {WEBSITE_URL}")
         embeddings_summarized_text = get_embeddings_huggingface([summarized_text])
         is_website_already_exists = is_website_exists(domain)
 
@@ -90,17 +94,18 @@ def runner(WEBSITE_URL):
             "updated_at": formatted_date,
         } 
         if is_website_already_exists:
-            print("Website already exists in the database, so updating")
+            print(f"Website already exists in the database, so updating:{WEBSITE_URL}")
             update_website({"domain":domain}, website_object)
         else:
-            print("Website does not exist in the database, so inserting")
+            print(f"Website does not exist in the database, so inserting:{WEBSITE_URL}")
             insert_website(website_object)
             print(f"Inserted website: {domain}")
 
 
 
         total_time = time.time() - start_time
-        print(f"Total time taken: {total_time} seconds")
+        print(f"Total time taken: {total_time} seconds: {WEBSITE_URL}")
+        return True
     
     except Exception as e:
         print(f"Error in scrapping URL: {WEBSITE_URL}")

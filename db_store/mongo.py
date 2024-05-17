@@ -56,6 +56,11 @@ def search_websites(embedding, limit=10, skip=0):
                      "summary": 1,
                      "score": { "$meta": "vectorSearchScore" }
               }
+              },
+              {
+                     "$match": {
+                     "score": { "$gt": 0.6 }
+                     }
               }
        ])
        return websites

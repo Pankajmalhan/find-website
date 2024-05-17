@@ -25,26 +25,33 @@ def get_website_text(url):
                 tag.decompose()
 
             # Further clean up: removing menu items and advertisements if identified by class or id
-            for tag in soup.find_all(['div', 'section']):
-                if 'menu' in tag.get('class', '') or 'ad' in tag.get('id', ''):
-                    tag.decompose()
+            for tag in soup.find_all(['div', 'section']) :
+                if not tag.decomposed:
+                    if  ('menu' in tag.get('class', '') or 'ad' in tag.get('id', '')):
+                        tag.decompose()
+
 
             # Remove elements with CSS property 'display: none' or 'visibility: hidden' or 'opacity: 0'
-            for tag in soup.find_all(style=True):
-                style = tag['style'].replace(' ', '').lower()
-                if 'display:none' in style or 'visibility:hidden' in style or 'opacity:0' in style:
-                    tag.decompose()
+            for tag in  soup.find_all(style=True):
+                if not tag.decomposed:
+                    style = tag['style'].replace(' ', '').lower()
+                    if 'display:none' in style or 'visibility:hidden' in style or 'opacity:0' in style:
+                        tag.decompose()
 
              # Remove divs with class 'modal'
             for modal_div in soup.find_all('div', class_='modal'):
-                modal_div.decompose()
+                if not modal_div.decomposed:
+                    modal_div.decompose()
 
             # Remove elements with classes or ids that suggest they are hidden
             hidden_indicators = ['hidden', 'hide', 'invisible', 'visuallyhidden']
             for tag in soup.find_all(True, class_=hidden_indicators):
-                tag.decompose()
+                if not tag.decomposed:
+                    tag.decompose()
+                    
             for tag in soup.find_all(True, id=hidden_indicators):
-                tag.decompose()
+                if not tag.decomposed:
+                    tag.decompose()
 
 
             # Extract text from the parsed HTML and normalize whitespace
